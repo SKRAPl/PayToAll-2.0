@@ -9587,7 +9587,7 @@
       if (currentBuild === null) {
         currentBuild = data.buildId;
       } else if (currentBuild !== data.buildId) {
-        console.log('Build changed. Reloading...');
+        localStorage.setItem("siteUpdated", "true");
         location.reload();
       }
     } catch (e) {
@@ -9596,6 +9596,14 @@
   }
 
   setInterval(checkBuild, 5000);
+
+  // Показываем уведомление после обновления
+  window.addEventListener("load", () => {
+    if (localStorage.getItem("siteUpdated") === "true") {
+      alert("Сайт был обновлён. Изменения уже применены!");
+      localStorage.removeItem("siteUpdated");
+    }
+  });
 </script>
 <script src="scripts/script.js"></script>
 <script>
