@@ -1,0 +1,20 @@
+{
+  "name": "table-ppo",
+  "version": "1.0.0",
+  "description": "Используйте команду git reset --hard <hash-коммита> чтобы откатить ветку к нужному коммиту.\r Затем выполните git push --force чтобы переписать историю в удалённом репозитории.",
+  "main": "generate-build.js",
+  "scripts": {
+    "build": "node generate-build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SKRAPl/PayToAll-2.0.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SKRAPl/PayToAll-2.0/issues"
+  },
+  "homepage": "https://github.com/SKRAPl/PayToAll-2.0#readme"
+}

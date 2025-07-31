@@ -9576,7 +9576,27 @@
         </div>
     </footer>
 </body>
+<script>
+  let currentBuild = null;
 
+  async function checkBuild() {
+    try {
+      const res = await fetch('/build.json', { cache: "no-cache" });
+      const data = await res.json();
+
+      if (currentBuild === null) {
+        currentBuild = data.buildId;
+      } else if (currentBuild !== data.buildId) {
+        console.log('Build changed. Reloading...');
+        location.reload();
+      }
+    } catch (e) {
+      console.warn('Could not check build.json:', e);
+    }
+  }
+
+  setInterval(checkBuild, 5000);
+</script>
 <script src="scripts/script.js"></script>
 <script>
   document.addEventListener("contextmenu", e => e.preventDefault());
