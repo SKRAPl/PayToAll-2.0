@@ -1959,16 +1959,16 @@
 
    .data__item {
      position: relative;
-     padding: 14px;
+     padding: 20px;
      -webkit-transition: all 0.3s ease;
      transition: all 0.3s ease;
      cursor: pointer; }
      .data__item-text {
        position: relative;
-       font-size: 12px;
+       font-size: 14px;
        color: white;
        font-weight: bolder;
-       line-height: 17px;
+       line-height: 22px;
        z-index: 3; }
      .data__item::before {
        content: '';
