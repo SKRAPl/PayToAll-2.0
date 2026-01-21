@@ -6581,6 +6581,8 @@ const tabs = () => {
     )
 }
 
+
+
 const removeAllClasses = (list, className) => {
     if (list && list.lenth !== 0) {
         list.forEach(item => {
@@ -6593,3 +6595,136 @@ const removeAllClasses = (list, className) => {
 document.addEventListener('DOMContentLoaded', function() {
     tabs();
 })
+
+// Поиск по таблице
+const searchInput = document.getElementById('searchInput');
+if (searchInput) {
+    searchInput.addEventListener('input', function() {
+        const searchValue = this.value.toLowerCase().trim();
+        const allDataItems = document.querySelectorAll('.data__item');
+        const allCategories = document.querySelectorAll('.data');
+        
+        // Разбиваем поиск на отдельные слова
+        const searchWords = searchValue.split(/\s+/).filter(word => word.length > 0);
+        
+        if (searchValue === '') {
+            // Если поле пустое - показываем все элементы и категории
+            allDataItems.forEach(item => {
+                item.style.display = '';
+            });
+            allCategories.forEach(category => {
+                category.style.display = '';
+            });
+        } else {
+            // Первый проход: показываем/скрываем элементы по поиску
+            allDataItems.forEach(item => {
+                // Ищем текст в data__item-text или data__item-text1
+                let itemText = item.querySelector('.data__item-text');
+                if (!itemText) {
+                    itemText = item.querySelector('.data__item-text1');
+                }
+                
+                if (itemText) {
+                    const text = itemText.textContent.toLowerCase();
+                    // Проверяем, что все слова поиска присутствуют в элементе
+                    const allWordsFound = searchWords.every(word => text.includes(word));
+                    
+                    if (text.trim() === '') {
+                        item.style.display = 'none'; // Временно скрываем пустые
+                    } else if (allWordsFound) {
+                        item.style.display = ''; // Показываем совпадающие
+                    } else {
+                        item.style.display = 'none'; // Скрываем несовпадающие
+                    }
+                }
+            });
+            
+            // Второй проход: для каждого товара показываем максимум один пустой разделитель
+            let lastShownCarName = null;
+            allDataItems.forEach((item, index) => {
+                let itemText = item.querySelector('.data__item-text');
+                if (!itemText) {
+                    itemText = item.querySelector('.data__item-text1');
+                }
+                
+                if (itemText && itemText.textContent.trim() === '') {
+                    // Это пустой элемент
+                    let carName = null;
+                    let hasKupyuBefore = false;
+                    let hasProdamAfter = false;
+                    
+                    // Ищем название товара из предыдущих видимых элементов
+                    for (let i = index - 1; i >= 0; i--) {
+                        const prevItem = allDataItems[i];
+                        let prevText = prevItem.querySelector('.data__item-text');
+                        if (!prevText) {
+                            prevText = prevItem.querySelector('.data__item-text1');
+                        }
+                        if (prevText && prevText.textContent.trim() !== '') {
+                            const text = prevText.textContent.toLowerCase();
+                            if (prevItem.style.display !== 'none') {
+                                hasKupyuBefore = text.includes('куплю');
+                                // Извлекаем название товара (часть в кавычках)
+                                const match = text.match(/"([^"]+)"/);
+                                if (match) {
+                                    carName = match[1];
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    
+                    // Ищем видимый "Продам" после пустого элемента
+                    for (let i = index + 1; i < allDataItems.length; i++) {
+                        const nextItem = allDataItems[i];
+                        let nextText = nextItem.querySelector('.data__item-text');
+                        if (!nextText) {
+                            nextText = nextItem.querySelector('.data__item-text1');
+                        }
+                        if (nextText && nextText.textContent.trim() !== '') {
+                            const text = nextText.textContent.toLowerCase();
+                            if (nextItem.style.display !== 'none') {
+                                hasProdamAfter = text.includes('продам');
+                                // Проверяем, что это тот же товар
+                                const match = text.match(/"([^"]+)"/);
+                                if (match && match[1] === carName) {
+                                    hasProdamAfter = true;
+                                } else {
+                                    hasProdamAfter = false;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    
+                    // Показываем пустой элемент только если он разделяет Куплю и Продам одного товара
+                    // и это первый такой разделитель для этого товара
+                    if (hasKupyuBefore && hasProdamAfter && carName && carName !== lastShownCarName) {
+                        item.style.display = '';
+                        lastShownCarName = carName;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                }
+            });
+            
+            // Третий проход: скрываем пустые категории
+            allCategories.forEach(category => {
+                const items = category.querySelectorAll('.data__item');
+                let hasVisible = false;
+                
+                items.forEach(item => {
+                    if (item.style.display !== 'none') {
+                        hasVisible = true;
+                    }
+                });
+                
+                if (hasVisible) {
+                    category.style.display = '';
+                } else {
+                    category.style.display = 'none';
+                }
+            });
+        }
+    });
+}
